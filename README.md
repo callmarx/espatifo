@@ -2,7 +2,7 @@
 
 Simples API-RESTful conversora de planilhas(CSV) em abstração relacional + não-relacional.
 
-Surgiu com o propósito de mapear planilhas de cálculo (ou planilha eletrônica, vulgo _spreadsheet_ ) sob um contexto de atributo em entidades com pais, ou seja abstração de dados não-relacional sobre dados relacionais.
+Surgiu com o propósito de mapear planilhas de cálculo (ou planilha eletrônica, vulgo _spreadsheet_) sob um contexto de atributo em entidades com pais, ou seja abstração de dados não-relacional sobre dados relacionais.
 
 ## Comece a usar
 
@@ -21,23 +21,23 @@ $ bundle install
 ```
 
 ####  Instalações no [Arch Linux](https://www.archlinux.org)
-- [Arch linux Wiki Redis](https://wiki.archlinux.org/index.php/Redis)
-- [Arch linux Wiki PostgreSQL](https://wiki.archlinux.org/index.php/PostgreSQL)
+- [Arch Linux Wiki Redis](https://wiki.archlinux.org/index.php/Redis)
+- [Arch Linux Wiki PostgreSQL](https://wiki.archlinux.org/index.php/PostgreSQL)
 
 ## Testes e T.D.D.
 
-Somos novatos e inexperientes, o que não é uma desculpa para irresponsabilidade. [Sabe desenvolver bem em TDD?](#contribuindo)
+Somos novatos e inexperientes, o que não é uma desculpa para irresponsabilidade. [Sabe desenvolver testes?](#seja-um-contribuidor)
 
 ## Desenvolvido sob
 
 * [Ruby](https://www.ruby-lang.org/en/) - Linguagem
 * [Ruby on Rails](https://rubyonrails.org/) - Framework
-* [Arch linux - Kernel 5.0.11](https://www.archlinux.org/download/) - Sistema Operacional
+* [Arch Linux - Kernel 5.0.11](https://www.archlinux.org/download/) - Sistema Operacional
 * [XGH](http://sou.gohorseprocess.com.br/extreme-go-horse-xgh/) - Metodologia
 
 ## Seja um contribuidor
 
-É OpenSource. Seguimos basicamente o [contrato social do Debian](https://www.debian.org/social_contract#guidelines) para colaborações.
+É OpenSource. Seguimos basicamente o [Contrato Social do Debian](https://www.debian.org/social_contract#guidelines) para colaborações.
 
 Em breve incluiremos os passos para forks. Contato muitomelhornostrilhos@gmail.com
 
