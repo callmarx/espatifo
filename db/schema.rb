@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_03_184552) do
+ActiveRecord::Schema.define(version: 2019_05_10_210728) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,15 +22,64 @@ ActiveRecord::Schema.define(version: 2019_05_03_184552) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "csv_table_fifties", force: :cascade do |t|
+    t.bigint "project_id"
+    t.integer "total_lines"
+    t.jsonb "csv_content", default: "[]", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_csv_table_fifties_on_project_id"
+  end
+
+  create_table "csv_table_forties", force: :cascade do |t|
+    t.bigint "project_id"
+    t.integer "total_lines"
+    t.jsonb "csv_content", default: "[]", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_csv_table_forties_on_project_id"
+  end
+
+  create_table "csv_table_tens", force: :cascade do |t|
+    t.bigint "project_id"
+    t.integer "total_lines"
+    t.jsonb "csv_content", default: "[]", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_csv_table_tens_on_project_id"
+  end
+
+  create_table "csv_table_thirties", force: :cascade do |t|
+    t.bigint "project_id"
+    t.integer "total_lines"
+    t.jsonb "csv_content", default: "[]", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_csv_table_thirties_on_project_id"
+  end
+
+  create_table "csv_table_twenties", force: :cascade do |t|
+    t.bigint "project_id"
+    t.integer "total_lines"
+    t.jsonb "csv_content", default: "[]", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_csv_table_twenties_on_project_id"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string "name", null: false
     t.text "description", null: false
-    t.jsonb "csv_table", default: "{}", null: false
     t.bigint "client_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["client_id"], name: "index_projects_on_client_id"
   end
 
+  add_foreign_key "csv_table_fifties", "projects"
+  add_foreign_key "csv_table_forties", "projects"
+  add_foreign_key "csv_table_tens", "projects"
+  add_foreign_key "csv_table_thirties", "projects"
+  add_foreign_key "csv_table_twenties", "projects"
   add_foreign_key "projects", "clients"
 end
