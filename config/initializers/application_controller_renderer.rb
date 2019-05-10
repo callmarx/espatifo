@@ -6,3 +6,4 @@
 #     https: false
 #   )
 # end
+ActiveRecord::Type.register(:jsonb, JsonbType, override: true)
