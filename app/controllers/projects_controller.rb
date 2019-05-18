@@ -2,23 +2,25 @@ class ProjectsController < ApplicationController
   before_action :set_client, only: [:index, :create]
   before_action :set_project, only: [:show, :update, :destroy]
 
-  # GET /projects
+  # GET /clients/:client_id/projects
   def index
     @projects = @client.projects.all
 
-    render json: @projects, except: [ :csv_table ]
+    render json: @projects
   end
 
+  # GET /projects
   def index_all
     @projects = Project.all
-    render json: @projects, except: [ :csv_table ]
-  end
-  # GET /projects/1
-  def show
-    render json: @project, except: [ :csv_table ]
+    render json: @projects
   end
 
-  # POST /projects
+  # GET /clients/:client_id/projects/1
+  def show
+    render json: @project
+  end
+
+  # POST /clients/:client_id/projects
   def create
     @project = @client.projects.new(project_params)
 
@@ -29,7 +31,7 @@ class ProjectsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /projects/1
+  # PATCH/PUT /clients/:client_id/projects/1
   def update
     if @project.update(project_params)
       render json: @project
@@ -38,7 +40,7 @@ class ProjectsController < ApplicationController
     end
   end
 
-  # DELETE /projects/1
+  # DELETE /clients/:client_id/projects/1
   def destroy
     @project.destroy
   end
@@ -54,6 +56,6 @@ class ProjectsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def project_params
-      params.require(:project).permit(:name, :description, :csv_table)
+      params.require(:project).permit(:name, :description)
     end
 end
