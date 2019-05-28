@@ -1,5 +1,6 @@
 class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :update, :destroy]
+  before_action :authenticate_user!
 
   # GET /clients
   def index
