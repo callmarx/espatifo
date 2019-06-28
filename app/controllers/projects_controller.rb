@@ -1,10 +1,11 @@
 class ProjectsController < ApplicationController
-  before_action :set_client, only: [:index, :create]
+  before_action :authenticate_user!
+  before_action :set_company, only: [:index, :create]
   before_action :set_project, only: [:show, :update, :destroy]
 
-  # GET /clients/:client_id/projects
+  # GET /companies/:company_id/projects
   def index
-    @projects = @client.projects.all
+    @projects = @company.projects.all
 
     render json: @projects
   end
@@ -15,14 +16,14 @@ class ProjectsController < ApplicationController
     render json: @projects
   end
 
-  # GET /clients/:client_id/projects/1
+  # GET /companies/:company_id/projects/1
   def show
     render json: @project
   end
 
-  # POST /clients/:client_id/projects
+  # POST /companies/:company_id/projects
   def create
-    @project = @client.projects.new(project_params)
+    @project = @company.projects.new(project_params)
 
     if @project.save
       render json: @project, status: :created, location: @project
@@ -31,7 +32,7 @@ class ProjectsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /clients/:client_id/projects/1
+  # PATCH/PUT /companies/:company_id/projects/1
   def update
     if @project.update(project_params)
       render json: @project
@@ -40,15 +41,15 @@ class ProjectsController < ApplicationController
     end
   end
 
-  # DELETE /clients/:client_id/projects/1
+  # DELETE /companies/:company_id/projects/1
   def destroy
     @project.destroy
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_client
-      @client = Client.find(params[:client_id])
+    def set_company
+      @company = Company.find(params[:company_id])
     end
     def set_project
       @project = Project.find(params[:id])

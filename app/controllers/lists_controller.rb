@@ -1,20 +1,20 @@
 class ListsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_project, only: [:index, :create]
   before_action :set_list, only: [:show, :update, :destroy, :preset]
-
-  # GET /clients/:client_id/projects/:project_id/lists
+  # GET /companies/:company_id/projects/:project_id/lists
   def index
     @lists = @project.lists.all
 
     render json: @lists
   end
 
-  # GET /clients/:client_id/projects/:project_id/lists/1
+  # GET /companies/:company_id/projects/:project_id/lists/1
   def show
     render json: @list
   end
 
-  # POST /clients/:client_id/projects/:project_id/lists
+  # POST /companies/:company_id/projects/:project_id/lists
   def create
     @list = @project.lists.new(list_params)
 
@@ -25,7 +25,7 @@ class ListsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /clients/:client_id/projects/:project_id/lists/1
+  # PATCH/PUT /companies/:company_id/projects/:project_id/lists/1
   def update
     if @list.update(list_params)
       render json: @list
@@ -34,12 +34,12 @@ class ListsController < ApplicationController
     end
   end
 
-  # DELETE /clients/:client_id/projects/:project_id/lists/1
+  # DELETE /companies/:company_id/projects/:project_id/lists/1
   def destroy
     @list.destroy
   end
 
-  # POST /clients/:client_id/projects/:project_id/lists/1
+  # POST /companies/:company_id/projects/:project_id/lists/1
   def preset
     #fazer as filtragens e buscas na HASH
     teste = preset_params # result = Modulo.execute_preset(@list, preset_params)

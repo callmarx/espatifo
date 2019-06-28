@@ -12,12 +12,12 @@ Rails.application.routes.draw do
              registrations: 'registrations'
            }
 
-  resources :clients do
+  resources :companies do
     resources :projects do
       resources :lists
     end
   end
-  post '/clients/:client_id/projects/:project_id/lists/:id', to: 'lists#preset'
+  post '/companies/:company_id/projects/:project_id/lists/:id', to: 'lists#preset'
   get '/projects', to: 'projects#index_all'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 

@@ -5,5 +5,5 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-teste = Client.create(name: "Cliente Teste", description: "descrição teste")
+teste = Company.create(name: "Companye Teste", description: "descrição teste")
 teste.projects.create(name: "Projeto Teste", description: "descrição projeto")

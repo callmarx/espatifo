@@ -27,7 +27,7 @@
 development:
   adapter: postgresql
   encoding: UTF-8
-  database: bellatrix_database
+  database: espatifo_database
   pool: 5
   username: callmarx
   password:
