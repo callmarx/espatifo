@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(version: 2019_06_28_221622) do
   end
 
   create_table "lists", force: :cascade do |t|
-    t.jsonb "nosql_hash"
+    t.jsonb "csv_json"
     t.bigint "project_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

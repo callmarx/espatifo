@@ -4,13 +4,13 @@ class ImportListWorker
   def perform(project_id, list_file)
     @list = List.new(project_id: project_id)
     path = Rails.root.join('tmp', 'csv_path', list_file)
-    @list.nosql_hash = CSV.open(path, {headers: :first_row}).map(&:to_h)
+    @list.csv_json = CSV.open(path, {headers: :first_row}).map(&:to_h)
     @list.save
 
     # # Com demilitador diferente de ','
     # @list = List.new(project_id: project_id)
     # path = Rails.root.join('lib', 'csv_path', list_file)
-    # @list.nosql_hash = CSV.open(path, {headers: :first_row, col_sep: "|"}).map(&:to_h)
+    # @list.csv_json = CSV.open(path, {headers: :first_row, col_sep: "|"}).map(&:to_h)
     # @list.save
 
 

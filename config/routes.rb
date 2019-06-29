@@ -13,11 +13,14 @@ Rails.application.routes.draw do
            }
 
   resources :companies do
-    resources :projects do
-      resources :lists
+    resources :projects, only: [:index, :create] do
+      resources :lists, only: [:index, :create]
     end
   end
-  post '/companies/:company_id/projects/:project_id/lists/:id', to: 'lists#preset'
+  resources :lists, only: [:show, :update, :destroy]
+  resources :projects, only: [:show, :update, :destroy]
+
+  post '/lists/:id/preset', to: 'lists#preset'
   get '/projects', to: 'projects#index_all'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 

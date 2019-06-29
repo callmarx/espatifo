@@ -29,6 +29,7 @@ gem 'pg'
 gem 'oj'
 gem 'devise'
 gem 'devise-jwt', '~> 0.5.9'
+gem 'will_paginate'
 
 
 # Reduces boot times through caching; required in config/boot.rb
