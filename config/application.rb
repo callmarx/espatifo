@@ -31,5 +31,11 @@ module Espatifo
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    # config.cache_store = :redis_cache_store, 'redis://localhost:6379/0/cache',{expires_in: 1.hour}
+    config.cache_store = :redis_store, {
+      expires_in: 1.hour,
+      namespace: 'cache',
+      redis: { host: 'localhost', port: 6379, db: 0 },
+      }
   end
 end

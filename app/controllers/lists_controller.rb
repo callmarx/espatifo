@@ -1,5 +1,5 @@
 class ListsController < ApplicationController
-  before_action :authenticate_user!
+  #before_action :authenticate_user!
   before_action :set_project, only: [:index, :create]
   before_action :set_list, only: [:show, :update, :destroy, :preset]
   # GET /companies/:company_id/projects/:project_id/lists
@@ -49,29 +49,36 @@ class ListsController < ApplicationController
   # POST /lists/1/preset
   def preset
     #fazer as filtragens e buscas na HASH
+    # require 'will_paginate/array'
+    # # cache_key = @list.id
+    # Rails.cache.fetch([@list.cache_key, __method__], expires_in: 30.minutes) do
+    #   @hashes_filtered = @list.csv_json
+    #   preset_params.each { |key, value|
+    #     if value.class == Array
+    #       begin
+    #         data1 = Time.strptime(value[0], '%m/%d/%Y')
+    #         data2 = Time.strptime(value[1], '%m/%d/%Y')
+    #         @hashes_filtered = @hashes_filtered.select { |h| Time.strptime(h[key], '%m/%d/%Y') >= data1 && Time.strptime(h[key], '%m/%d/%Y') <= data2}
+    #       rescue StandardError => e
+    #         float1 = value[0].to_f
+    #         float2 = value[1].to_f
+    #         @hashes_filtered = @hashes_filtered.select { |h| h[key].to_f >= float1 && h[key].to_f <= float2}
+    #       end
+    #     else
+    #       @hashes_filtered = @hashes_filtered.select { |h| h[key] == value}
+    #     end
+    #   }
+    #   # result = Modulo.execute_preset(@list, preset_params)
+    #   filtered = @hashes_filtered.paginate(page: params[:page], per_page: 30)
+    #   result = {pages: filtered.total_pages, filtered: filtered}
+    #   render json: result
+    #   # teste = preset_params # result = Modulo.execute_preset(@list, preset_params)
+    #   # render json: teste
+    # end
+    filtered = @list.preset(preset_params)
     require 'will_paginate/array'
-    @hashes_filtered = @list.csv_json
-    preset_params.each { |key, value|
-      if value.class == Array
-        begin
-          data1 = Time.strptime(value[0], '%m/%d/%Y')
-          data2 = Time.strptime(value[1], '%m/%d/%Y')
-          @hashes_filtered = @hashes_filtered.select { |h| Time.strptime(h[key], '%m/%d/%Y') >= data1 && Time.strptime(h[key], '%m/%d/%Y') <= data2}
-        rescue StandardError => e
-          float1 = value[0].to_f
-          float2 = value[1].to_f
-          @hashes_filtered = @hashes_filtered.select { |h| h[key].to_f >= float1 && h[key].to_f <= float2}
-        end
-      else
-        @hashes_filtered = @hashes_filtered.select { |h| h[key] == value}
-      end
-    }
-    # result = Modulo.execute_preset(@list, preset_params)
-    filtered = @hashes_filtered.paginate(page: params[:page], per_page: 30)
-    result = {pages: filtered.total_pages, filtered: filtered}
-    render json: result
-    # teste = preset_params # result = Modulo.execute_preset(@list, preset_params)
-    # render json: teste
+    result = filtered.paginate(page: params[:page], per_page: 30)
+    render json: {pages: result.total_pages, filtered: result}
   end
 
   private
