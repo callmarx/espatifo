@@ -1,5 +1,5 @@
 class CompaniesController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_login!
   before_action :set_company, only: [:show, :update, :destroy]
 
   # GET /companies

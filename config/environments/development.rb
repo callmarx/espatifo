@@ -12,16 +12,9 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
-  # # teste de cache com redis fonte: https://opensource.com/article/18/4/ruby-rails-redis
-  # config.action_controller.perform_caching = true
-  # config.cache_store = :redis_store, {
-  #   expires_in: 1.hour,
-  #   namespace: 'cache',
-  #   redis: { host: 'localhost', port: 6379, db: 0 },
-  #   }
-
-  # Enable/disable caching. By default caching is disabled.
-  # Run rails dev:cache to toggle caching.
+  # comentado cache default do Rails por conta do Redis-cache
+  # # Enable/disable caching. By default caching is disabled.
+  # # Run rails dev:cache to toggle caching.
   # if Rails.root.join('tmp', 'caching-dev.txt').exist?
   #   config.action_controller.perform_caching = true
   #
@@ -38,12 +31,13 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options)
   config.active_storage.service = :local
 
+  # Devise requirement
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
   config.action_mailer.perform_caching = false
-
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

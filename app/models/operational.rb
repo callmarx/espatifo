@@ -1,3 +1,3 @@
 class Operational < ApplicationRecord
-  belongs_to :user
+  has_one :login, as: :user
 end

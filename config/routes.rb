@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  # devise_for :users
-  devise_for :users,
+
+  devise_for :logins,
            path: '',
            path_names: {
              sign_in: 'login',
@@ -20,6 +20,8 @@ Rails.application.routes.draw do
   resources :lists, only: [:show, :update, :destroy]
   resources :projects, only: [:show, :update, :destroy]
 
+  get '/lists/:id/csv_index', to: 'lists#csv_index'
+  post '/lists/:id/graph_data', to: 'lists#graph_data'
   post '/lists/:id/preset', to: 'lists#preset'
   get '/projects', to: 'projects#index_all'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

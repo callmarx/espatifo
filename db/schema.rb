@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_28_221622) do
+ActiveRecord::Schema.define(version: 2019_07_12_203034) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,12 +27,10 @@ ActiveRecord::Schema.define(version: 2019_06_28_221622) do
     t.string "second_name"
     t.date "birthdate"
     t.string "role"
+    t.bigint "company_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "company_id"
-    t.bigint "user_id"
     t.index ["company_id"], name: "index_employees_on_company_id"
-    t.index ["user_id"], name: "index_employees_on_user_id"
   end
 
   create_table "jwt_blacklists", force: :cascade do |t|
@@ -51,14 +49,27 @@ ActiveRecord::Schema.define(version: 2019_06_28_221622) do
     t.index ["project_id"], name: "index_lists_on_project_id"
   end
 
+  create_table "logins", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_type"
+    t.bigint "user_id"
+    t.index ["email"], name: "index_logins_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_logins_on_reset_password_token", unique: true
+    t.index ["user_type", "user_id"], name: "index_logins_on_user_type_and_user_id"
+  end
+
   create_table "operationals", force: :cascade do |t|
     t.string "first_name"
     t.string "second_name"
     t.date "birthdate"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_operationals_on_user_id"
   end
 
   create_table "projects", force: :cascade do |t|
@@ -70,22 +81,7 @@ ActiveRecord::Schema.define(version: 2019_06_28_221622) do
     t.index ["company_id"], name: "index_projects_on_company_id"
   end
 
-  create_table "users", force: :cascade do |t|
-    t.string "username", default: "", null: false
-    t.string "email", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-  end
-
   add_foreign_key "employees", "companies"
-  add_foreign_key "employees", "users"
   add_foreign_key "lists", "projects"
-  add_foreign_key "operationals", "users"
   add_foreign_key "projects", "companies"
 end

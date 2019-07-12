@@ -208,7 +208,7 @@ DEPENDENCIES
   byebug
   csv
   devise
-  devise-jwt (~> 0.5.9)
+  devise-jwt
   dotenv-rails
   listen (>= 3.0.5, < 3.2)
   oj

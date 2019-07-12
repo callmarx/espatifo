@@ -21,7 +21,6 @@ module Espatifo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
-    config.autoload_paths += %W(#{config.root}/lib)
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
@@ -31,11 +30,15 @@ module Espatifo
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-    # config.cache_store = :redis_cache_store, 'redis://localhost:6379/0/cache',{expires_in: 1.hour}
-    config.cache_store = :redis_store, {
-      expires_in: 1.hour,
-      namespace: 'cache',
-      redis: { host: 'localhost', port: 6379, db: 0 },
-      }
+    # Set timezone
+    config.time_zone = 'America/Sao_Paulo'
+    config.active_record.default_timezone = :local
+
+    # sidekiq config
+    config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_name_prefix = "#{ENV['ACTIVE_JOB_QUEUE_PREFIX']}_#{Rails.env}"
+
+    # Cache Redis
+    config.cache_store = :redis_cache_store, {url: "#{ENV['REDIS_URL']}/#{ENV['REDIS_CACHE_PATH']}"}
   end
 end

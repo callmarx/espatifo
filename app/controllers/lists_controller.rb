@@ -1,7 +1,11 @@
 class ListsController < ApplicationController
-  #before_action :authenticate_user!
+  require 'will_paginate/array'
+  include Listable
+  # before_action :authenticate_login!
   before_action :set_project, only: [:index, :create]
-  before_action :set_list, only: [:show, :update, :destroy, :preset]
+  before_action :set_list, only: [:show, :csv_index, :graph_data, :preset, :update, :destroy]
+  before_action :set_paginate_params, only: [:show, :csv_index, :graph_data, :preset]
+
   # GET /companies/:company_id/projects/:project_id/lists
   def index
     @lists = @project.lists.all
@@ -9,16 +13,29 @@ class ListsController < ApplicationController
     render json: @lists
   end
 
-  # GET lists/1
+  # GET /lists/1
   def show
-    require 'will_paginate/array'
-    @hashes = @list.csv_json.paginate(page: params[:page], per_page: 30)
-    result = {list_id: @list.id, pages: @hashes.total_pages, hashes: @hashes}
-    render json: result
-    # render json: @jsons
-    # result = resource.as_json
-    # result["perk_type"] = resource.perk.class.to_s
-    # render json: result
+    list_paginated = @list.csv_json.paginate(page: @page_selected, per_page: @per_page)
+    render json: {list_id: @list.id, total_listed: @list.csv_json.count, total_pages: list_paginated.total_pages, current_page: @page_selected, per_page: @per_page, hashes: list_paginated}
+  end
+
+  # GET /lists/1/csv_index/<index>
+  def csv_index
+    one_hash = @list.csv_json[params[:index] == nil ? 0 : params[:index].to_i - 1]
+    render json: one_hash
+  end
+
+  # POST /lists/1/preset
+  def preset
+    filtered = get_preset(preset_params)
+    result = filtered.paginate(page: @page_selected, per_page: @per_page)
+    render json: {list_id: @list.id, total_listed: filtered.count, total_pages: result.total_pages, current_page: @page_selected, per_page: @per_page, hashes: result}
+  end
+
+  # post /lists/1/graph_data
+  def graph_data
+    final_result = get_graph_data(preset_params)
+    render json: final_result
   end
 
   # POST /companies/:company_id/projects/:project_id/lists
@@ -26,7 +43,7 @@ class ListsController < ApplicationController
     @list = @project.lists.new(list_params)
 
     if @list.save
-      render json: @list, status: :created, location: @list #ver se esse location funciona
+      render json: @list, status: :created
     else
       render json: @list.errors, status: :unprocessable_entity
     end
@@ -46,41 +63,6 @@ class ListsController < ApplicationController
     @list.destroy
   end
 
-  # POST /lists/1/preset
-  def preset
-    #fazer as filtragens e buscas na HASH
-    # require 'will_paginate/array'
-    # # cache_key = @list.id
-    # Rails.cache.fetch([@list.cache_key, __method__], expires_in: 30.minutes) do
-    #   @hashes_filtered = @list.csv_json
-    #   preset_params.each { |key, value|
-    #     if value.class == Array
-    #       begin
-    #         data1 = Time.strptime(value[0], '%m/%d/%Y')
-    #         data2 = Time.strptime(value[1], '%m/%d/%Y')
-    #         @hashes_filtered = @hashes_filtered.select { |h| Time.strptime(h[key], '%m/%d/%Y') >= data1 && Time.strptime(h[key], '%m/%d/%Y') <= data2}
-    #       rescue StandardError => e
-    #         float1 = value[0].to_f
-    #         float2 = value[1].to_f
-    #         @hashes_filtered = @hashes_filtered.select { |h| h[key].to_f >= float1 && h[key].to_f <= float2}
-    #       end
-    #     else
-    #       @hashes_filtered = @hashes_filtered.select { |h| h[key] == value}
-    #     end
-    #   }
-    #   # result = Modulo.execute_preset(@list, preset_params)
-    #   filtered = @hashes_filtered.paginate(page: params[:page], per_page: 30)
-    #   result = {pages: filtered.total_pages, filtered: filtered}
-    #   render json: result
-    #   # teste = preset_params # result = Modulo.execute_preset(@list, preset_params)
-    #   # render json: teste
-    # end
-    filtered = @list.preset(preset_params)
-    require 'will_paginate/array'
-    result = filtered.paginate(page: params[:page], per_page: 30)
-    render json: {pages: result.total_pages, filtered: result}
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_project
@@ -88,14 +70,20 @@ class ListsController < ApplicationController
     end
 
     def set_list
-      @list = List.find(params[:id])
+      @list = Rails.cache.fetch([List,params[:id], __method__], expires_in: 30.minutes) do
+        List.find(params[:id])
+      end
+    end
+
+    def set_paginate_params
+      @page_selected = params[:page] || 1
+      @per_page = params[:per_page] || 30
     end
 
     # Only allow a trusted parameter "white list" through.
     def list_params
       params.require(:list).permit(:csv_json)
     end
-
     def preset_params
       params.require(:preset)
     end

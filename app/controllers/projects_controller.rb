@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_login!
   before_action :set_company, only: [:index, :create]
   before_action :set_project, only: [:show, :update, :destroy]
 
