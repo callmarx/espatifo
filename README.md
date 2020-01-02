@@ -2,16 +2,20 @@
 
 Simples API-RESTful conversora de planilhas(CSV) em abstração relacional + não-relacional.
 
-Surgiu com o propósito de mapear planilhas de cálculo (ou planilha eletrônica, vulgo _spreadsheet_) sob um contexto de atributo em entidades com pais, ou seja abstração de dados não-relacional sobre dados relacionais.
+Surgiu com o propósito de mapear planilhas de cálculo (ou planilha eletrônica, vulgo _spreadsheet_)
+sob um contexto de atributo em entidades com pais, ou seja abstração de dados não-relacional sobre
+dados relacionais.
 
 ## Comece a usar
 
 
 
 ### Pré requisitos
-Este projeto necessita de [Redis](https://redis.io/), [Sidekiq](https://github.com/mperham/sidekiq) e [PostgreSQL](https://www.postgresql.org/) (acima da versão 9.4 para uso de dados do tipo JSONB).
+Este projeto necessita de [Redis](https://redis.io/), [Sidekiq](https://github.com/mperham/sidekiq)
+e [PostgreSQL](https://www.postgresql.org/) (acima da versão 12 para uso de dados do tipo JSONB).
 
-Instalações dos mesmos devem ser feita no seu sistema operacional (você leu LINUX!!!), com exceção do sidekiq, que é uma gema:
+Instalações dos mesmos devem ser feita no seu sistema operacional (você leu LINUX!!!), com exceção
+do sidekiq, que é uma gema:
 ```
 #no seu Gemfile
 gem 'sidekiq'
@@ -26,20 +30,22 @@ $ bundle install
 
 ## Testes e T.D.D.
 
-Somos novatos e inexperientes, o que não é uma desculpa para irresponsabilidade. [Sabe desenvolver testes?](#seja-um-contribuidor)
+Somos novatos e inexperientes, o que não é uma desculpa para irresponsabilidade.
+[Sabe desenvolver testes?](#seja-um-contribuidor)
 
 ## Desenvolvido sob
 
 * [Ruby](https://www.ruby-lang.org/en/) - Linguagem
 * [Ruby on Rails](https://rubyonrails.org/) - Framework
-* [Arch Linux - Kernel 5.0.11](https://www.archlinux.org/download/) - Sistema Operacional
+* [Arch Linux](https://www.archlinux.org/download/) - Sistema Operacional
 * [XGH](http://sou.gohorseprocess.com.br/extreme-go-horse-xgh/) - Metodologia
 
 ## Seja um contribuidor
 
-É OpenSource. Seguimos basicamente o [Contrato Social do Debian](https://www.debian.org/social_contract#guidelines) para colaborações.
+É OpenSource. Seguimos basicamente o
+[Contrato Social do Debian](https://www.debian.org/social_contract#guidelines) para colaborações.
 
-Em breve incluiremos os passos para forks. Contato muitomelhornostrilhos@gmail.com
+Em breve incluiremos os passos para forks. Contato eugeniojimenes@gmail.com
 
 ## Versão
 
