@@ -2,12 +2,6 @@ class User::RegistrationsController < Devise::RegistrationsController
   respond_to :json
   before_action :configure_sign_up_params, only: [:create]
   before_action :configure_account_update_params, only: [:update]
-  #before_action :configure_permitted_parameters, only: [:create, :update]
-
-  #def configure_permitted_parameters
-  #  update_attrs = [:password, :password_confirmation, :current_password, :role]
-  #  devise_parameter_sanitizer.permit :account_update, keys: update_attrs
-  #end
 
   # GET /resource/sign_up
   # def new
@@ -16,8 +10,13 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
    def create
-     Rails.logger.info "DEBUG:: sign_up_params = #{sign_up_params}"
-     super
+     #super
+     build_resource(sign_up_params)
+     unless resource.save
+       render status: :unprocessable_entity
+     else
+      respond_with resource
+     end
    end
 
   # GET /resource/edit
@@ -64,9 +63,6 @@ class User::RegistrationsController < Devise::RegistrationsController
   # If you have extra params to permit, append them to the sanitizer.
    def configure_sign_up_params
      devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name, :role, :birthdate])
-     #devise_parameter_sanitizer.permit(:sign_up) {|u|
-     #  u.permit(:first_name, :last_name, :email, :password, :password_confirmation, :role, :birthdate)
-     #}
    end
 
   # If you have extra params to permit, append them to the sanitizer.
