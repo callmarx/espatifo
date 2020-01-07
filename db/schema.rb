@@ -10,10 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_02_221621) do
+ActiveRecord::Schema.define(version: 2020_01_07_172954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "data_infos", force: :cascade do |t|
+    t.jsonb "chart_info"
+    t.jsonb "min_max"
+    t.string "data_portion_type", null: false
+    t.bigint "data_portion_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["data_portion_type", "data_portion_id"], name: "index_data_infos_on_data_portion_type_and_data_portion_id"
+  end
+
+  create_table "data_sets", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.jsonb "keys_info"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "jwt_blacklists", force: :cascade do |t|
     t.string "jti"
@@ -21,6 +39,18 @@ ActiveRecord::Schema.define(version: 2020_01_02_221621) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["jti"], name: "index_jwt_blacklists_on_jti"
+  end
+
+  create_table "reports", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.jsonb "preset"
+    t.bigint "user_id", null: false
+    t.bigint "data_set_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["data_set_id"], name: "index_reports_on_data_set_id"
+    t.index ["user_id"], name: "index_reports_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -40,4 +70,6 @@ ActiveRecord::Schema.define(version: 2020_01_02_221621) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "reports", "data_sets"
+  add_foreign_key "reports", "users"
 end
