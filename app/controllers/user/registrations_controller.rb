@@ -32,7 +32,7 @@ class User::RegistrationsController < Devise::RegistrationsController
       without_current_password = account_update_params.to_hash
       without_current_password.delete 'current_password'
       current_user.update(without_current_password)
-      current_user.save
+      #current_user.save
       super
     end
    end
@@ -67,7 +67,7 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   # If you have extra params to permit, append them to the sanitizer.
    def configure_account_update_params
-     devise_parameter_sanitizer.permit(:account_update, keys: [:role, :birthdate])
+     devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, :last_name, :role, :birthdate])
    end
 
   # The path used after sign up.
