@@ -20,24 +20,35 @@ module DataPreset
     query_array = preset_params.map do |exp, subhash|
       # field --> campo ternario do banco
       field = subhash.keys.first
+
+      # subhash.values.first cai dentro da hash do field ('aaa', 'aab', 'aac' etc)
+      # ela deve ter uma subhash com APENAS UMA key que será o operador.
+      if !(subhash.values.first.is_a? Hash) or
+      subhash.values.first.keys.count !=1 or
+      subhash.values.first == {}
+        return [false, {
+          error: "wrong operator",
+          message: "each field need a hash with exactly one valid operator"
+        }]
+      end
+
       # operator --> chave dentro das possibilidades:
       # [include, not_include, exacly, not_exacly, greater_then, less_then]
       operator = subhash.values.first.first.first.to_s
       # value --> valor atribuido ao 'operator'
       value = subhash.values.first.first.second
+      # Retorna erro se value têm caracteres não permitidos
+      if value.class == String and value.match(/[^[:alpha:][0-9]?!@,. \n\t]/)
+        return [false, {
+          error: "special character",
+          message: "special characters not allowed in operators"
+        }]
+      end 
 
       case operator
       when 'include'
-        return [false, {
-          error: "special character",
-          message: "special characters not allowed in 'include' and 'not_include' operators"
-        }] if value.match /[^[:alpha:][0-9],.' ?!\n\t]/
         "(jsonb_path_exists(row, '$ ? ($.#{field} like_regex \"#{value}\" flag \"i\")'))"
       when 'not_include'
-        return [false, {
-          error: "special character",
-          message: "special characters not allowed in 'include' and 'not_include' operators"
-        }] if value.match /[^[:alpha:][0-9],.' ?!\n\t]/
         "(not jsonb_path_exists(row, '$ ? ($.#{field} like_regex \"#{value}\" flag \"i\")'))"
       when 'exactly'
         "(row @@ '$.#{field} == #{(value.is_a? Numeric) ? value : "\"#{value}\""}')"
@@ -48,7 +59,10 @@ module DataPreset
       when 'less_then'
         "(row @@ '$.#{field} <= #{value}')"
       else
-        return [false, {error: "Wrong operator!", message:"operator #{operator} do not exist in our logic :-("}]
+        return [false, {
+          error: "Wrong operator!",
+          message:"operator '#{operator}' do not exist in our logic :-("
+        }]
       end
     end
     return [true, query_array.join(" AND ")]
