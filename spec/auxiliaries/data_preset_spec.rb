@@ -76,7 +76,7 @@ RSpec.describe DataPreset do
       }])
     end
     it 'more than one operator per field' do
-      @preset_params[:exp1][:aai][:include] = "some value"
+      @preset_params[:exp1][:aai][:include] = "some value" # adiciona mais um operador
       expect(DataPreset.read @preset_params).to eq([false, {
         error: "wrong operator",
         message: "each field need a hash with exactly one valid operator"
@@ -88,6 +88,10 @@ RSpec.describe DataPreset do
         error: "wrong operator",
         message: "each field need a hash with exactly one valid operator"
       }])
+    end
+    it 'exp with no field' do
+      @preset_params[:exp1] = "not a hash"
+      expect((DataPreset.read @preset_params).first).to be false
     end
   end
 end

@@ -2,9 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DataSet, type: :model do
   context 'validates' do
-    it "name can't be empty" do
-      is_expected.to validate_presence_of(:name)
-    end
+    it {is_expected.to validate_presence_of(:name)}
     #it { is_expected.to validate_presence_of(:keys_info) }
     ## Como presence:true não permite vazio {}, preciso restrigir a nil
     it "keys_info can't be nil" do
@@ -14,9 +12,7 @@ RSpec.describe DataSet, type: :model do
     end
   end
   context 'relations' do
-    it 'have one data_portion' do
-      is_expected.to have_one(:data_info)
-    end
+    it {is_expected.to have_one(:data_info)}
   end
 
   context 'keys_info format' do

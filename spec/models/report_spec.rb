@@ -2,9 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Report, type: :model do
   context 'validates' do
-    it "name can't be empty" do
-      is_expected.to validate_presence_of(:name)
-    end
+    it {is_expected.to validate_presence_of(:name)}
     it "preset can't be nil" do
       report = build(:report, preset: nil)
       report.valid?

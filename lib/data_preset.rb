@@ -18,9 +18,13 @@ module DataPreset
     ] if preset_params.count != logic.scan(/(?=#{'exp'})/).count
 
     query_array = preset_params.map do |exp, subhash|
-      # field --> campo ternario do banco
-      field = subhash.keys.first
-
+      # Se subhash não é Hash retorna erro
+      unless subhash.is_a? Hash
+        return [false, {
+          error: "no field defined",
+          message: "each 'exp' needs a field to filter"
+        }]
+      end
       # subhash.values.first cai dentro da hash do field ('aaa', 'aab', 'aac' etc)
       # ela deve ter uma subhash com APENAS UMA key que será o operador.
       if !(subhash.values.first.is_a? Hash) or
@@ -32,12 +36,15 @@ module DataPreset
         }]
       end
 
+      # field --> campo ternario do banco ('aaa', 'aab', 'aac' etc)
+      field = subhash.keys.first
       # operator --> chave dentro das possibilidades:
       # [include, not_include, exacly, not_exacly, greater_then, less_then]
       operator = subhash.values.first.first.first.to_s
       # value --> valor atribuido ao 'operator'
       value = subhash.values.first.first.second
-      # Retorna erro se value têm caracteres não permitidos
+
+      # Retorna erro se 'value' têm caracteres não permitidos
       if value.class == String and value.match(/[^[:alpha:][0-9]?!@,. \n\t]/)
         return [false, {
           error: "special character",
