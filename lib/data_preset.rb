@@ -6,49 +6,72 @@ module DataPreset
     #logic = preset_params[:logic]
     #preset_params = preset_params.except(:logic)
 
-    ### Testando preenchimento correto de preset_params
-    return [false,
-      {error: "No 'logic' key!", message:"Read the API documentation"}
-    ] unless logic
-    return [false,
-      {error: "Wrong logic key!", message:"number of breckets not equal."}
-    ] if (logic.scan(/(?=#{'\('})/).count != logic.scan(/(?=#{'\)'})/).count)
-    return [false,
-      {error: "Wrong logic key", message:"number of 'exp' not equal."}
-    ] if preset_params.count != logic.scan(/(?=#{'exp'})/).count
+    ## Testando preenchimento correto de preset_params
+    return [false,{
+      error: "No 'logic' key!",
+      message:"Read the API documentation"
+    }] unless logic.is_a? String
+
+    ## verifico se logic tem apenas os caracters: '()expandor[0-9] '
+    return [false, {
+      error: "Wrong 'logic' key!",
+      message: "Character not allowed in 'logic' key"
+    }] if logic.match(/[^()expandor[0-9] ]/)
+
+    ## verifico quantide correta de abre e fecha parenteses
+    return [false, {
+      error: "Wrong 'logic' key!",
+      message:"Number of breckets not equal."
+    }] if (logic.scan(/(?=#{'\('})/).count != logic.scan(/(?=#{'\)'})/).count)
+
+    logic_exp_array = logic.scan(/exp[0-9]+/)
+    ## Verifico se minhas keys existem em logic
+    preset_params.keys.each do |k|
+      return [false, {
+        error: "Wrong params!",
+        message: "Key '#{k}' not included in 'logic'"
+      }] unless logic_exp_array.include? k.to_s
+    end
+
+    ## verifico se quantidade de exp em logic e no resto de preset_params é igual
+    return [false, {
+      error: "Wrong 'logic' key",
+      message:"Number of 'exp' not equal."
+    }] if preset_params.count != logic_exp_array.count
 
     query_array = preset_params.map do |exp, subhash|
-      # Se subhash não é Hash retorna erro
+      ## Se subhash não é Hash retorna erro
       unless subhash.is_a? Hash
         return [false, {
-          error: "no field defined",
-          message: "each 'exp' needs a field to filter"
+          error: "No field defined",
+          message: "Each 'exp' needs a field to filter"
         }]
       end
-      # subhash.values.first cai dentro da hash do field ('aaa', 'aab', 'aac' etc)
-      # ela deve ter uma subhash com APENAS UMA key que será o operador.
+      ## subhash.values.first cai dentro da hash do field ('aaa', 'aab', 'aac' etc)
+      ## ela deve ter uma subhash com APENAS UMA key que será o operador.
       if !(subhash.values.first.is_a? Hash) or
       subhash.values.first.keys.count !=1 or
       subhash.values.first == {}
         return [false, {
-          error: "wrong operator",
-          message: "each field need a hash with exactly one valid operator"
+          error: "Wrong operator",
+          message: "Each field need a hash with exactly one valid operator"
         }]
       end
 
-      # field --> campo ternario do banco ('aaa', 'aab', 'aac' etc)
+      ## field --> campo ternario do banco ('aaa', 'aab', 'aac' etc)
       field = subhash.keys.first
-      # operator --> chave dentro das possibilidades:
-      # [include, not_include, exacly, not_exacly, greater_then, less_then]
+      ## operator --> chave dentro das possibilidades:
+      ## include, not_include, exacly, not_exacly, greater_then, less_then
       operator = subhash.values.first.first.first.to_s
-      # value --> valor atribuido ao 'operator'
+      ## value --> valor atribuido ao 'operator'
       value = subhash.values.first.first.second
 
-      # Retorna erro se 'value' têm caracteres não permitidos
+      ## Retorna erro se 'value' têm 
+      #caracteres não permitidos
       if value.class == String and value.match(/[^[:alpha:][0-9]?!@,. \n\t]/)
         return [false, {
-          error: "special character",
-          message: "special characters not allowed in operators"
+          error: "Character not allowed",
+          message: "Special characters not allowed in operators"
         }]
       end 
 
@@ -68,11 +91,10 @@ module DataPreset
       else
         return [false, {
           error: "Wrong operator!",
-          message:"operator '#{operator}' do not exist in our logic :-("
+          message:"Operator '#{operator}' do not exists"
         }]
       end
     end
     return [true, query_array.join(" AND ")]
   end
 end
-
