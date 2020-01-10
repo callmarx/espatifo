@@ -30,6 +30,11 @@ class DataSetsController < ApplicationController
     
   end
 
+  # POST /data_sets/1/preset
+  def preset
+    
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_data_set
