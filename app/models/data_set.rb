@@ -10,12 +10,12 @@ class DataSet < ApplicationRecord
     "dynamic_content#{self.id}".classify.constantize
   end
 
-  def convert(full_name_filed)
+  def encode_key(full_name_filed)
     self.keys_info.key full_name_filed
   end
 
   # letters_key --> Symbol
-  def unconvert(letters_key)
+  def decode_key(letters_key)
     self.keys_info[letters_key]
   end
 

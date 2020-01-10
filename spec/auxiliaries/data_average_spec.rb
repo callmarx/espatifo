@@ -1,5 +1,5 @@
 require 'rails_helper'
 
-RSpec.describe DataAverage do
+RSpec.describe "DataAverage" do
 
 end
