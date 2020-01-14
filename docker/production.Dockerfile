@@ -22,12 +22,22 @@ ENV WEB_CONCURRENCY=2
 # Porstgresql database
 ARG DB_NAME
 ENV DB_NAME=espatifo
+ARG DB_USER
+ENV DB_USER=postgres
+ARG DB_HOST
+ENV DB_HOST=db
 
 # Redis
 ARG REDIS_URL
 ENV REDIS_URL=redis://redis:6379
 ARG REDIS_CACHE_PATH
 ENV REDIS_CACHE_PATH=0/cache
+
+# Sidekiq
+ARG SIDEKIQ_WORKER_URL
+ENV SIDEKIQ_WORKER_URL=redis://redis:6379/1
+ARG SIDEKIQ_QUEUE_PREFIX
+ENV SIDEKIQ_QUEUE_PREFIX=espatifo:workers
 
 COPY Gemfile /espatifo_production/Gemfile
 COPY Gemfile.lock /espatifo_production/Gemfile.lock
