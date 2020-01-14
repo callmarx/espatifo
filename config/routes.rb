@@ -12,5 +12,5 @@ Rails.application.routes.draw do
     }
 
   get '/data_sets', to: 'data_sets#index'
-  get '/data_sets/:id', to: 'data_sets#show_dynamic_content'
+  get '/data_sets/:id', to: 'data_sets#show'
 end

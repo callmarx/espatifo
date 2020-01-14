@@ -1,5 +1,5 @@
 FROM ruby:2.6.5-alpine
-RUN apk update && apk add --update --no-cache --virtual build-dependency build-base ruby-dev postgresql-dev git bash
+RUN apk update && apk add --update --no-cache --virtual build-dependency build-base ruby-dev postgresql-dev git bash less
 RUN mkdir /espatifo_development
 WORKDIR /espatifo_development
 COPY Gemfile /espatifo_development/Gemfile
@@ -18,4 +18,6 @@ RUN touch /tmp/caching-dev.txt
 #EXPOSE 3000
 
 # Start the main process.
-CMD ["rails", "server", "-b", "0.0.0.0"]
+#CMD ["bundle", "exec", "sidekiq", "&>", "log/sidekiq.log"]
+#CMD ["rm", "-f", "tmp/pids/server.pid"]
+#CMD ["rails", "server", "-b", "0.0.0.0"]

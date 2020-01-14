@@ -1,6 +1,6 @@
 class DevEnrichmentWorker
   include Sidekiq::Worker
-  sidekiq_options queue: "#{ENV['ACTIVE_JOB_QUEUE_PREFIX']}_#{ENV['RAILS_ENV']}_default"
+  sidekiq_options queue: "#{ENV['SIDEKIQ_QUEUE_PREFIX']}_#{ENV['RAILS_ENV']}_default"
 
   def perform(data_set_id, csv_file)
     data_set = DataSet.find_by_id(data_set_id)

@@ -39,9 +39,9 @@ module Espatifo
     config.time_zone = 'America/Sao_Paulo'
     config.active_record.default_timezone = :local
 
-    # sidekiq config
-    config.active_job.queue_adapter = :sidekiq
-    config.active_job.queue_name_prefix = "#{ENV['ACTIVE_JOB_QUEUE_PREFIX']}_#{Rails.env}"
+    ## sidekiq config
+    #config.active_job.queue_adapter = :sidekiq
+    #config.active_job.queue_name_prefix = "#{ENV['SIDEKIQ_QUEUE_PREFIX']}_#{Rails.env}"
 
     # Cache Redis
     config.cache_store = :redis_cache_store, {url: "#{ENV['REDIS_URL']}/#{ENV['REDIS_CACHE_PATH']}"}

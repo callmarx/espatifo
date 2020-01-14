@@ -17,7 +17,7 @@ services:
     build:
       context: .
       dockerfile: development.Dockerfile
-    command: bash -c "dotenv bundle exec sidekiq -C config/sidekiq.yml.erb"
+    command: bash -c "./sidekiq.dev.sh"
     depends_on:
       - db_dev
       - redis
@@ -43,8 +43,7 @@ services:
     ports:
       - "3001:3000"
     depends_on:
-      - db_dev
-      - redis
+      - sidekiq
   nginx:
     build:
       context: .
