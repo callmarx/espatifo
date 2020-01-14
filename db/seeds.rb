@@ -21,7 +21,9 @@ User.create(first_name: "Margaret",
             role: "Computer Scientist",
             permission: "standard",
             email: "margaret.hamilton@great.women.com",
-            password: "Margaret Hamilton")
+            password: "Margaret Hamilton",
+            password_confirmation: "Margaret Hamilton")
+
 
 3.times do
   DataSet.create(name: Faker::Name.name,
