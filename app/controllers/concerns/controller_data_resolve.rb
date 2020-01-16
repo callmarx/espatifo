@@ -10,6 +10,16 @@ module ControllerDataResolve
       end
     end
 
+    def preset_encode(preset_hash)
+      preset_readed = preset_hash.except(:logic).map{
+        |key,value| [key, value.transform_keys{
+          |sub_key| @data_set.encode_key(sub_key)
+        }]
+      }.to_h
+      preset_readed[:logic] = preset_hash[:logic]
+      preset_readed
+    end
+
     def order_query
       order_field = params[:order_field]
       order_by = params[:order_by]

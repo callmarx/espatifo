@@ -69,9 +69,15 @@ RSpec.describe DataPreset do
         exp5: {adp: {exactly: "SP"}}
       }
     end
-    it 'query verify' do
+    it "query verify with 'and'" do
       expect(DataPreset.read @preset_params).to eq([true,
-      "(not jsonb_path_exists(row, '$ ? ($.aai like_regex \"pinto\" flag \"i\")')) AND (row @@ '$.aak >= 15') AND (row @@ '$.aak <= 29') AND (row @@ '$.aal >= 1') AND (row @@ '$.adp == \"SP\"')"
+      "(((not jsonb_path_exists(row, '$ ? ($.aai like_regex \"pinto\" flag \"i\")')) and (row @@ '$.aak >= 15') and (row @@ '$.aak <= 29') and (row @@ '$.aal >= 1') and (row @@ '$.adp == \"SP\"')))"
+      ])
+    end
+    it "query verify with 'and' and 'or'" do
+      @preset_params[:logic] = "((exp1 and exp2 or exp3 and exp4 and exp5))"
+      expect(DataPreset.read @preset_params).to eq([true,
+      "(((not jsonb_path_exists(row, '$ ? ($.aai like_regex \"pinto\" flag \"i\")')) and (row @@ '$.aak >= 15') or (row @@ '$.aak <= 29') and (row @@ '$.aal >= 1') and (row @@ '$.adp == \"SP\"')))"
       ])
     end
     it 'special characters not allowed in operators' do

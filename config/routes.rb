@@ -13,4 +13,6 @@ Rails.application.routes.draw do
 
   get '/data_sets', to: 'data_sets#index'
   get '/data_sets/:id', to: 'data_sets#show'
+
+  post '/data_sets/:id/list', to: 'data_sets#list'
 end

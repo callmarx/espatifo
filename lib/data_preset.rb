@@ -95,6 +95,9 @@ module DataPreset
         }]
       end
     end
-    return [true, query_array.join(" AND ")]
+    query_array.each_with_index do |exp, idx|
+      logic.sub!("exp#{idx + 1}", exp)
+    end
+    return [true, logic]
   end
 end
