@@ -57,6 +57,17 @@ RSpec.describe DataPreset do
         message:"Number of 'exp' not equal."
       }])
     end
+    it "logic with invalid number of 'or'/'and'" do
+      preset_params = {
+        logic: "(exp1 and exp2 or)",
+        exp1: {aai: {include: "pinto"}},
+        exp2: {aak: {greater_then: 15}}
+      }
+      expect(DataPreset.read preset_params).to eq([false, {
+        error: "Wrong 'logic' key",
+        message: "Number of 'or'/'and' must be equal of 'exp' less one"
+      }])
+    end
   end
   context 'Unit test' do
     before do

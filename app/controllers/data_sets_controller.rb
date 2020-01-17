@@ -7,21 +7,29 @@ class DataSetsController < ApplicationController
   before_action :set_paginate_params, only: [:list]
   before_action :list_params, only: [:list]
   before_action :stats_params, only: [:stats]
+  after_action :clean_variables
 
   # GET /data_sets
   def index
     @data_sets = DataSet.order('id ASC')
-    render json: @data_sets, except: [:keys_info]
+    render json: @data_sets.map{|dt|
+      dt.as_json.except("keys_info").merge({"enriched" => !(dt.keys_info == {})})
+    }
   end
 
   # GET /data_sets/1
   def show
-    render json: @data_set, except: [:keys_info]
+    render json: @data_set.as_json.except("keys_info").merge({"total_keys" => @data_set.keys_info.values})
   end
 
   # GET /data_sets/1/1
   def show_subject
-    
+    subject = @dynamic_content.find_by_id(params[:subject_id])
+    if subject
+      render json: subject
+    else
+      render status: :not_found
+    end
   end
 
   # POST /data_sets/1/list
@@ -29,19 +37,13 @@ class DataSetsController < ApplicationController
     ## BODY parametros:
     # preset
     if params[:preset]
-      preset_hash = params[:preset].to_unsafe_h
-      #Rails.logger.info "###### preset_hash = #{JSON.pretty_generate preset_hash}"
-      # preset_encode --> em private method
-      preset_hash = preset_encode(preset_hash)
-      #Rails.logger.info "###### preset_hash_encoded = #{JSON.pretty_generate preset_hash}"
-      preset_readed = DataPreset.read(preset_hash)
-      #Rails.logger.info "###### preset_readed = #{preset_readed.last}"
-      if !preset_readed.first
-        render json: preset_readed.last, status: :bad_request
+      build_preset_params
+      if !@preset_readed.first
+        render json: @preset_readed.last, status: :bad_request
         return
       else
         @pagy, @list_paginated = pagy(
-          @dynamic_content.where(Arel.sql(preset_readed.last)).order(order_query),
+          @dynamic_content.where(Arel.sql(@preset_readed.last)).order(order_query),
           items: @per_page
         )
       end
@@ -62,13 +64,43 @@ class DataSetsController < ApplicationController
   def stats
     ## BODY parametros:
     # preset
-    # graph_data
+    # data_chart
     # average
     # min_max
     # sum
     # unique
     # total_keys
-
+    result = {}
+    if params[:preset]
+      build_preset_params
+      if !@preset_readed.first
+        render json: @preset_readed.last, status: :bad_request
+        return
+      else
+        @list_collection = @dynamic_content.where(Arel.sql(@preset_readed.last))
+      end
+    else
+      @list_collection = @dynamic_content.all
+    end
+    if params[:data_chart]
+      result[:data_chart] = get_chart(params[:data_chart])
+    end
+    if params[:average]
+      result[:average] = get_average(params[:average])
+    end
+    if params[:min_max]
+      result[:min_max] = get_min_max(params[:min_max])
+    end
+    if params[:sum]
+      result[:sum] = get_sum(params[:sum])
+    end
+    if params[:unique_values]
+      result[:unique_values] = get_unique_values(params[:unique_values])
+    end
+    if params[:total_keys] == true
+      result[:total_keys] = @data_set.keys_info.values
+    end
+    render json: result
   end
 
   private
@@ -99,12 +131,31 @@ class DataSetsController < ApplicationController
       ### não adianta por conta do to_unsafe_h
       params.permit(
         :preset,
-        :graph_data,
+        :data_chart,
         :average,
         :min_max,
         :sum,
         :unique_values,
         :total_keys
       )
+    end
+
+    def build_preset_params
+      preset_hash = params[:preset].to_unsafe_h
+      preset_hash = preset_encode(preset_hash)
+      @preset_readed = DataPreset.read(preset_hash)
+    end
+
+    def clean_variables
+      @data_set = nil
+      @dynamic_content = nil
+      @data_sets = nil
+      @preset_readed = nil
+      @list_collection = nil
+      @pagy = nil
+      @list_paginated = nil
+      @list_decoded = nil
+      @page_selected = nil
+      @per_page = nil
     end
 end

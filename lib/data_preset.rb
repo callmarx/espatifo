@@ -24,20 +24,25 @@ module DataPreset
       message:"Number of breckets not equal."
     }] if (logic.scan(/(?=#{'\('})/).count != logic.scan(/(?=#{'\)'})/).count)
 
-    logic_exp_array = logic.scan(/exp[0-9]+/)
+    exp_array = logic.scan(/exp[0-9]+/)
+    and_or_array = logic.scan(/and|or/)
+    return [false, {
+        error: "Wrong 'logic' key",
+        message: "Number of 'or'/'and' must be equal of 'exp' less one"
+    }] unless exp_array.count == and_or_array.count + 1
     ## Verifico se minhas keys existem em logic
     preset_params.keys.each do |k|
       return [false, {
         error: "Wrong params!",
         message: "Key '#{k}' not included in 'logic'"
-      }] unless logic_exp_array.include? k.to_s
+      }] unless exp_array.include? k.to_s
     end
 
     ## verifico se quantidade de exp em logic e no resto de preset_params é igual
     return [false, {
       error: "Wrong 'logic' key",
       message:"Number of 'exp' not equal."
-    }] if preset_params.count != logic_exp_array.count
+    }] if preset_params.count != exp_array.count
 
     query_array = preset_params.map do |exp, subhash|
       ## Se subhash não é Hash retorna erro
