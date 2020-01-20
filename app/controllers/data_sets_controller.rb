@@ -106,7 +106,7 @@ class DataSetsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_data_set
-      @data_set = DataSet.find(params[:id])
+      @data_set = DataSet.find_by_id(params[:id])
     end
 
     def set_dynamic_content
