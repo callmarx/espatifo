@@ -33,22 +33,6 @@ ActiveRecord::Schema.define(version: 2020_01_20_164920) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "dynamic_content1", force: :cascade do |t|
-    t.jsonb "row"
-  end
-
-  create_table "dynamic_content2", force: :cascade do |t|
-    t.jsonb "row"
-  end
-
-  create_table "dynamic_content3", force: :cascade do |t|
-    t.jsonb "row"
-  end
-
-  create_table "dynamic_content4", force: :cascade do |t|
-    t.jsonb "row"
-  end
-
   create_table "jwt_blacklists", force: :cascade do |t|
     t.string "jti"
     t.datetime "exp"
