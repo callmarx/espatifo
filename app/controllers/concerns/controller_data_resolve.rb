@@ -25,9 +25,9 @@ module ControllerDataResolve
       if !order_field
         Arel.sql("id ASC")
       elsif order_by == 'DESC'
-        Arel.sql("row->'#{order_field}' DESC")
+        Arel.sql("row->'#{@data_set.encode_key order_field}' DESC")
       else
-        Arel.sql("row->'#{order_field}' ASC")
+        Arel.sql("row->'#{@data_set.encode_key order_field}' ASC")
       end
     end
 
