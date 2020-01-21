@@ -52,18 +52,22 @@ class ReportsController < ApplicationController
 
   # GET /reports/1/download
   def download_csv_preset
-    preset_hash = preset_encode(@report.config_body["preset"])
-    preset_readed = DataPreset.read(preset_hash)
-    #Rails.logger.info "####### @report.config_body = #{@report.config_body.as_json}"
-    #Rails.logger.info "####### preset_readed.last = #{preset_readed.last}"
-    if preset_readed[0]
-      list_collection = @dynamic_content.where(Arel.sql(preset_readed.last))
-      file_name = generate_csv(@report.id, list_collection)
-      send_file file_name, type: "text/csv", x_sendfile: true#,disposition: "attachment"
-      #File.delete(file_name) if File.exist?(file_name)
+    preset_params = @report.config_body["preset"]
+    if preset_params
+      preset_hash = preset_encode(preset_params)
+      preset_readed = DataPreset.read(preset_hash)
+      if preset_readed.first
+        @list_collection = @dynamic_content.where(Arel.sql(preset_readed.last))
+      else
+        render json: preset_readed.last, status: :bad_request
+        return
+      end
     else
-      render json: preset_readed[1], status: :bad_request
+      @list_collection = @dynamic_content.all
     end
+    file_name = generate_csv(@list_collection)
+    send_file file_name, type: "text/csv", x_sendfile: true#,disposition: "attachment"
+    #File.delete(file_name) if File.exist?(file_name)
   end
 
   # POST /data_sets/1/reports
@@ -108,7 +112,8 @@ class ReportsController < ApplicationController
     
     def set_dynamic_content
       set_report
-      @dynamic_content = @report.data_set.dynamic_content
+      @data_set = @report.data_set
+      @dynamic_content = @data_set.dynamic_content
     end
 
     # parametros de url para paginação

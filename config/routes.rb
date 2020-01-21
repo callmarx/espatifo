@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   post '/data_sets/:id/list', to: 'data_sets#list'
   post '/data_sets/:id/stats', to: 'data_sets#stats'
 
-  resources :reports
+  resources :reports, except: [:create]
+  post '/data_sets/:data_set_id/reports', to: 'reports#create'
   get '/reports/:id/download', to: 'reports#download_csv_preset'
 end
