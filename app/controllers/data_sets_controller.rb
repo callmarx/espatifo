@@ -1,7 +1,7 @@
 class DataSetsController < ApplicationController
   include Pagy::Backend
-  include ControllerDataResolve
-  #before_action :authenticate_user!
+  include DataResolveConcern
+  before_action :authenticate_user!
   before_action :set_data_set, only: [:show]
   before_action :set_dynamic_content, only: [:list, :show_subject, :stats]
   before_action :set_paginate_params, only: [:list]
@@ -26,7 +26,9 @@ class DataSetsController < ApplicationController
   def show_subject
     subject = @dynamic_content.find_by_id(params[:subject_id])
     if subject
-      render json: subject
+      @list_collection = [subject]
+      relation_decode
+      render json: @list_decoded
     else
       render status: :not_found
     end
@@ -42,13 +44,13 @@ class DataSetsController < ApplicationController
         render json: @preset_readed.last, status: :bad_request
         return
       else
-        @pagy, @list_paginated = pagy(
+        @pagy, @list_collection = pagy(
           @dynamic_content.where(Arel.sql(@preset_readed.last)).order(order_query),
           items: @per_page
         )
       end
     else
-      @pagy, @list_paginated = pagy(@dynamic_content.order(order_query), items: @per_page)
+      @pagy, @list_collection = pagy(@dynamic_content.order(order_query), items: @per_page)
     end
     relation_decode
     render json: {
@@ -151,9 +153,8 @@ class DataSetsController < ApplicationController
       @dynamic_content = nil
       @data_sets = nil
       @preset_readed = nil
-      @list_collection = nil
       @pagy = nil
-      @list_paginated = nil
+      @list_collection = nil
       @list_decoded = nil
       @page_selected = nil
       @per_page = nil
