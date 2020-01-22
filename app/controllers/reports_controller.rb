@@ -5,7 +5,7 @@ class ReportsController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_report, only: [:show, :update, :destroy]
-  before_action :set_dynamic_content, only: [:download_csv_preset]
+  before_action :set_dynamic_content, only: [:download_csv_preset, :show]
   before_action :set_paginate_params, only: [:preset]
 
   # GET /reports
@@ -20,10 +20,16 @@ class ReportsController < ApplicationController
 
   # GET /reports/1
   def show
-    render json: @report, except: [:data_set_id, :user_id], include: [
-      data_set: {except: [:keys_info]},
-      user: {only: [:id, :email]}
-    ]
+    #render json: @report, except: [:data_set_id, :user_id], include: [
+      #data_set: {except: [:keys_info]},
+      #user: {only: [:id, :email]}
+    #]
+    render json: @report.as_json.except("data_set_id", "user_id").merge(
+      {"data_set" => @data_set.as_json.except("keys_info").merge(
+        {"total_listed" => @dynamic_content.count}
+      )},
+      {"user" => @report.user.as_json(:only => [:id, :email])}
+    )
   end
 
   ## GET /reports/1/preset
@@ -109,7 +115,7 @@ class ReportsController < ApplicationController
     def set_report
       @report = Report.find_by_id(params[:id])
     end
-    
+
     def set_dynamic_content
       set_report
       @data_set = @report.data_set

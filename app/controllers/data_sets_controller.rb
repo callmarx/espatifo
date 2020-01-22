@@ -3,7 +3,7 @@ class DataSetsController < ApplicationController
   include ControllerDataResolve
   #before_action :authenticate_user!
   before_action :set_data_set, only: [:show]
-  before_action :set_dynamic_content, only: [:list, :show_subject, :stats]
+  before_action :set_dynamic_content, only: [:list, :show_subject, :stats, :show]
   before_action :set_paginate_params, only: [:list]
   before_action :list_params, only: [:list]
   before_action :stats_params, only: [:stats]
@@ -19,7 +19,10 @@ class DataSetsController < ApplicationController
 
   # GET /data_sets/1
   def show
-    render json: @data_set.as_json.except("keys_info").merge({"total_keys" => @data_set.keys_info.values})
+    render json: @data_set.as_json.except("keys_info").merge(
+      {"total_listed" => @dynamic_content.count},
+      {"total_keys" => @data_set.keys_info.values}
+    ) 
   end
 
   # GET /data_sets/1/1
@@ -70,6 +73,8 @@ class DataSetsController < ApplicationController
     # sum
     # unique
     # total_keys
+    # total_listed
+
     result = {}
     if params[:preset]
       build_preset_params
@@ -96,6 +101,9 @@ class DataSetsController < ApplicationController
     end
     if params[:unique_values]
       result[:unique_values] = get_unique_values(params[:unique_values])
+    end
+    if params[:total_listed] == true
+      result[:total_listed] = @list_collection.count
     end
     if params[:total_keys] == true
       result[:total_keys] = @data_set.keys_info.values
@@ -136,7 +144,8 @@ class DataSetsController < ApplicationController
         :min_max,
         :sum,
         :unique_values,
-        :total_keys
+        :total_keys,
+        :total_listed
       )
     end
 
