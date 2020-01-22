@@ -1,5 +1,5 @@
 class ReportsController < ApplicationController
-  include ControllerDataResolve
+  include DataResolveConcern
   include ReportConcern
   include Pagy::Backend
 
@@ -7,6 +7,7 @@ class ReportsController < ApplicationController
   before_action :set_report, only: [:show, :update, :destroy]
   before_action :set_dynamic_content, only: [:download_csv_preset, :show]
   before_action :set_paginate_params, only: [:preset]
+  after_action :clean_variables
 
   # GET /reports
   def index
@@ -31,30 +32,6 @@ class ReportsController < ApplicationController
       {"user" => @report.user.as_json(:only => [:id, :email])}
     )
   end
-
-  ## GET /reports/1/preset
-  #def preset
-  #  result = get_preset(@report.config_body["preset"]) # devolve tupla --> [true ou false, response body]
-  #  if result[0]
-  #    list = result[1]
-  #    if @report.config_body["average"]
-  #      result_average = get_average(list, @report.config_body["average"])
-  #    else
-  #      result_average = nil
-  #    end
-  #    @pagy, @list_paginated = pagy(list, items: @per_page)
-  #    render json: {
-  #      total_listed: @pagy.count,
-  #      total_pages: @pagy.pages,
-  #      current_page: @page_selected,
-  #      per_page: @per_page,
-  #      average: result_average,
-  #      result: @list_paginated
-  #    }
-  #  else
-  #    render json: result[1], status: :bad_request
-  #  end
-  #end
 
   # GET /reports/1/download
   def download_csv_preset
@@ -131,5 +108,14 @@ class ReportsController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def report_params
       params.require(:report).to_unsafe_h
+    end
+
+    def clean_variables
+      @report = nil
+      @reports = nil
+      @data_set = nil
+      @dynamic_content = nil
+      @page_selected = nil
+      @per_page = nil
     end
 end

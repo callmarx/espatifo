@@ -1,10 +1,10 @@
-module ControllerDataResolve
+module DataResolveConcern
   extend ActiveSupport::Concern
 
   private
     def relation_decode
-      @list_decoded = @list_paginated.map(&:as_json)
-      @list_paginated.each_with_index do |obj, idx|
+      @list_decoded = @list_collection.map(&:as_json)
+      @list_collection.each_with_index do |obj, idx|
         @list_decoded[idx]['row'].transform_keys!{ |k| @data_set.decode_key(k)}
       end
     end
