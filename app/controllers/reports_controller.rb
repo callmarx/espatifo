@@ -69,10 +69,17 @@ class ReportsController < ApplicationController
   def create
     @report = current_user.reports.new(report_params.merge({data_set_id: params[:data_set_id]}))
     if @report.save
-      render json: @report, except: [:data_set_id, :user_id], include: [
-        data_set: {except: [:keys_info]},
-        user: {only: [:id, :email]}
-      ], status: :created
+      #render json: @report, except: [:data_set_id, :user_id], include: [
+        #data_set: {except: [:keys_info]},
+        #user: {only: [:id, :email]}
+      #], status: :created
+      render json: @report.as_json.except("data_set_id", "user_id").merge(
+        {"data_set" => @report.data_set.as_json.except("keys_info").merge(
+          {"total_listed" => @report.data_set.dynamic_content.count}
+      )},
+      {"user" => @report.user.as_json(:only => [:id, :email])}
+    ), status: :created
+
     else
       render json: @report.errors, status: :unprocessable_entity
     end
