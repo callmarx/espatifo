@@ -17,7 +17,7 @@ class ReportsController < ApplicationController
       data_set: {except: [:keys_info]},
       user: {only: [:id, :email]}
     ]
-  end
+   end
 
   # GET /reports/1
   def show
