@@ -13,10 +13,22 @@ class ReportsController < ApplicationController
   def index
     @reports = Report.order('id ASC')
 
-    render json: @reports, except: [:data_set_id, :user_id], include: [
-      data_set: {except: [:keys_info]},
-      user: {only: [:id, :email]}
-    ]
+    #Customizando o response para adicionar "total_listed"
+    #dentro da chave "data_set"
+    render_reports = Array.new
+    @reports.each do |each_json|
+      render_reports << each_json.as_json(:except => ["data_set_id", "user_id"]).merge(
+        {"data_set" => each_json.data_set.as_json(:except => ["keys_info"]).merge(
+          "total_listed" => each_json.data_set.dynamic_content.count)},
+        {"user" => each_json.user.as_json(:only => ["id", "email"])}
+      )
+    end
+
+    #render json: @reports, except: [:data_set_id, :user_id], include: [
+      #data_set: {except: [:keys_info]},
+      #user: {only: [:id, :email]}
+    #]
+    render json: render_reports
    end
 
   # GET /reports/1
