@@ -5,6 +5,7 @@ class DataSet < ApplicationRecord
   validate :check_keys_info_format
   after_create :create_dynamic_content
   after_find :load_dynamic_content
+  before_destroy :destroy_dynamic_content
 
   def dynamic_content
     "dynamic_content#{self.id}".classify.constantize
@@ -67,5 +68,14 @@ class DataSet < ApplicationRecord
         #  def check_keys
         #  end
       })
+    end
+
+    def destroy_dynamic_content
+      class_name = "dynamic_content#{self.id}"
+      class_name.classify.constantize.destroy_all
+      ActiveRecord::Migration.drop_table(class_name)
+      ## IMPORTANTE: Não encontrei um jeito de "remover" a definição em memoria do DynamicModel,
+      ## a classe permance na listada em ApplicationRecord.subclasses.map(&:name), mesmo com o
+      ## comando: Zeitwerk::Loader.eager_load_all
     end
 end

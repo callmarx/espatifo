@@ -10,6 +10,15 @@ RSpec.describe "DynamicContent", type: :model do
   it 'have a dynamic_model' do
     expect(@data_set.dynamic_content).to be("dynamic_content#{@data_set.id}".classify.constantize)
   end
+  it 'must be deleted when data_set be deleted' do
+    @data_set.destroy
+    ## IMPORTANTE: Não encontrei um jeito de "remover" a definição em memoria do DynamicModel,
+    ## a classe permance na listada em ApplicationRecord.subclasses.map(&:name), mesmo com o
+    ## comando: Zeitwerk::Loader.eager_load_all
+    expect{
+      DataSet.find_by_sql("SELECT * FROM dynamic_content#{@data_set.id}")
+    }.to raise_error(ActiveRecord::StatementInvalid)
+  end
   context 'validates' do
     it "row can't be empty" do
       dynamic_content = @data_set.dynamic_content.new
