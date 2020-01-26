@@ -87,8 +87,8 @@ class ReportsController < ApplicationController
 
   # PATCH/PUT /reports/1
   def update
-    if current_user != @report.user
-      render json: {error: "Only the report's owner can edit it"}, status: :unauthorized
+    if !(current_user.admin? or current_user.moderator? or current_user == @report.user)
+      render json: {error: "Only the report's owner or admin/moderator can edit it"}, status: :unauthorized
     elsif @report.update(report_params)
       render json: @report
     else
@@ -98,8 +98,8 @@ class ReportsController < ApplicationController
 
   # DELETE /reports/1
   def destroy
-    if current_user != @report.user
-      render json: {error: "Only the report's owner can destroy it"}, status: :unauthorized
+    if !(current_user.admin? or current_user.moderator? or current_user == @report.user)
+      render json: {error: "Only the report's owner or admin/moderator can destroy it"}, status: :unauthorized
     else
       @report.destroy
       render status: :no_content

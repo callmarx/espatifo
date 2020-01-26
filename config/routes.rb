@@ -20,4 +20,6 @@ Rails.application.routes.draw do
   resources :reports, except: [:create]
   post '/data_sets/:data_set_id/reports', to: 'reports#create'
   get '/reports/:id/download', to: 'reports#download_csv_preset'
+
+  post '/dashboard/undigested_input', to: 'admin_dashboard#create_undigested_input'
 end
