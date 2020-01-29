@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe "Devise Controllers", :type => :request do
   before(:each) do
-    @user, @auth_headers = get_user_and_header
+    @user = create(:user)
+    @auth_headers = get_header_auth @user
   end
   context "log in and sign up methods" do
     it "create a user" do

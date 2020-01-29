@@ -4,6 +4,7 @@ class DataSet < ApplicationRecord
 
   validates :name, presence: true
   validate :check_keys_info_format
+
   after_create :create_dynamic_content
   after_find :load_dynamic_content
   before_destroy :destroy_dynamic_content
@@ -28,7 +29,8 @@ class DataSet < ApplicationRecord
       else
         self.keys_info.keys.each do |key|
           string_key = key.to_s
-          if string_key.length != 3 or string_key.match(/[^[:alpha:]]/) or string_key != string_key.downcase
+          if string_key.length != 3 or string_key.match(/[^[:alpha:]]/) or
+          string_key != string_key.downcase
             self.errors.add :keys_info, "The keys must have exactly 3 lowercase letters"
             break
           end

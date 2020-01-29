@@ -24,6 +24,23 @@ User.create(first_name: "Margaret",
             password: "Margaret Hamilton",
             password_confirmation: "Margaret Hamilton")
 
+User.create(first_name: "Annie",
+            last_name: "J. Easley",
+            birthdate: Time.strptime("23/04/1933", "%d/%m/%Y"),
+            role: "Computer Scientist",
+            permission: "moderator",
+            email: "annie.j.easley@great.women.com",
+            password: "Annie J. Easley",
+            password_confirmation: "Annie J. Easley")
+
+User.create(first_name: "Ruth",
+            last_name: "Teitelbaum",
+            birthdate: Time.strptime("01/01/1924", "%d/%m/%Y"),
+            role: "Computer Scientist",
+            permission: "moderator",
+            email: "ruth.teitelbaum@great.women.com",
+            password: "Ruth Teitelbaum",
+            password_confirmation: "Ruth Teitelbaum")
 
 3.times do
   DataSet.create(name: Faker::Name.name,

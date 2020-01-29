@@ -73,7 +73,7 @@ module DataPreset
 
       ## Retorna erro se 'value' têm 
       #caracteres não permitidos
-      if value.class == String and value.match(/[^[:alpha:][0-9]?!@,. \n\t]/)
+      if value.class == String and value.match(/[^[:alpha:][0-9]?!@,.:()\/ \n\t]/)
         return [false, {
           error: "Character not allowed",
           message: "Special characters not allowed in operators"

@@ -1,8 +1,8 @@
 require 'devise/jwt/test_helpers'
 
 module UserToken
-  def get_user_and_header
-    user = create(:user)
+  def get_header_auth(user)
+    #user = create(:user)
     post '/login', params: {
       user: {
         email: user.email,
@@ -12,6 +12,7 @@ module UserToken
     headers = {
       'Authorization' => response.headers['Authorization']
     }
-    [user, headers]
+    #[user, headers]
+    headers
   end
 end

@@ -7,7 +7,9 @@ class UndigestedInput < ApplicationRecord
 
   enum status: [:todo, :doing, :done]
 
+  validates :name, presence: true
   validate :check_content_and_keys_info_format
+
   before_save :set_keys_info
   before_save :set_status
 

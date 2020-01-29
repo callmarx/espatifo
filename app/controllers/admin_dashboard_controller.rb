@@ -51,6 +51,14 @@ class AdminDashboardController < ApplicationController
     # no update espera-se não ter mais um data_set no body da requisição
     treated_params = undigested_input_params
 
+    if treated_params[:name]
+      @undigested_input.name = treated_params[:name]
+    end
+
+    if treated_params[:description]
+      @undigested_input.description = treated_params[:description]
+    end
+
     if treated_params[:content]
       treated_params[:content].each do |subject|
         if @undigested_input.content.include? subject

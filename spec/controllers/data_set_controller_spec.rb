@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe "DataSetsController", :type => :request do
   before do
-    @user, @auth_headers = get_user_and_header
+    @user = create(:user)
+    @auth_headers = get_header_auth @user
     @data_set_1 = create(:data_set)
     @data_set_2 = create(:data_set)
     @data_set_3 = create(:data_set)
