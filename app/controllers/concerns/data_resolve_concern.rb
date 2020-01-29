@@ -84,6 +84,10 @@ module DataResolveConcern
       total_sum = 0.0
       total_NA = 0
       @list_collection.each do |subject|
+        ## Troca linha abaixo se não houver NA na base (for NULL)
+        ## ficaria:
+        ##    if !subject.row[key]
+        ## Porem têm que existir em keys_info
         if subject.row[key] == "NA"
           total_NA += 1
         else
@@ -103,9 +107,12 @@ module DataResolveConcern
       min_max = {}
       min_max_params.each do |key|
         key_encoded = @data_set.encode_key(key)
+        values_array = @list_collection.map{
+            |s| s.row[key_encoded] if s.row[key_encoded].is_a? Numeric
+          }.compact
         min_max[key] = {
-          min: @list_collection.map{ |s| s.row[key_encoded]}.min,
-          max: @list_collection.map{ |s| s.row[key_encoded]}.max
+          min: values_array.min,
+          max: values_array.max
         }
       end
       min_max
@@ -116,7 +123,9 @@ module DataResolveConcern
       sum = {}
       sum_params.each do |key|
         key_encoded = @data_set.encode_key(key)
-        sum[key] = @list_collection.map{ |s| s.row[key_encoded]}.sum
+        sum[key] = @list_collection.map{
+          |s| s.row[key_encoded] if s.row[key_encoded].is_a? Numeric
+        }.compact.sum
       end
       sum
     end

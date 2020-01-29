@@ -8,7 +8,7 @@ class User < ApplicationRecord
   enum permission: [:admin, :standard, :moderator]
 
   has_many :reports
-  has_one :undigested_input
+  has_many :undigested_inputs
 
   before_save :default_permission
   validates :password, :password_confirmation, presence: true

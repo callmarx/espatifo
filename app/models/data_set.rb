@@ -1,6 +1,6 @@
 class DataSet < ApplicationRecord
   has_one :data_info, as: :data_portion
-  has_one :undigested_input
+  has_many :undigested_inputs
 
   validates :name, presence: true
   validate :check_keys_info_format

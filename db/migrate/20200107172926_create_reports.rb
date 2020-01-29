@@ -3,7 +3,7 @@ class CreateReports < ActiveRecord::Migration[6.0]
     create_table :reports do |t|
       t.string :name
       t.text :description
-      t.jsonb :preset
+      t.jsonb :config_body
       t.references :user, null: false, foreign_key: true
       t.references :data_set, null: false, foreign_key: true
 
