@@ -4,10 +4,10 @@ class DevEnrichmentWorker
 
   def perform(data_set_id, csv_file)
     data_set = DataSet.find_by_id(data_set_id)
-    #class_name = "DynamicContent#{data_set_id}"
 
     path = Rails.root.join('tmp', 'csv', csv_file)
     header = CSV.open(path, col_sep: ';', &:readline)
+    header.delete("Status__STATUS_INTEGER")
 
     ## Gera o keys_info do data_set
     ## Utilizar keys longas ocupa mais espação no banco, isso é feito para ter mais espaço no banco
@@ -59,7 +59,7 @@ class DevEnrichmentWorker
           end
         end
       end
-      data_set.dynamic_content.create!(row: final_hash)
+      data_set.dynamic_content.create!(row: final_hash, status: row["Status__STATUS_INTEGER"].to_i)
     end
   end
 end

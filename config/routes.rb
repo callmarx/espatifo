@@ -13,7 +13,10 @@ Rails.application.routes.draw do
 
   get '/data_sets', to: 'data_sets#index'
   get '/data_sets/:id', to: 'data_sets#show'
+
   get '/data_sets/:id/:subject_id', to: 'data_sets#show_subject'
+  put '/data_sets/:id/:subject_id', to: 'data_sets#update_subject'
+
   post '/data_sets/:id/list', to: 'data_sets#list'
   post '/data_sets/:id/stats', to: 'data_sets#stats'
 
@@ -26,4 +29,5 @@ Rails.application.routes.draw do
   post '/dashboard/undigested_input', to: 'admin_dashboard#create_undigested_input'
   put '/dashboard/undigested_input/:id', to: 'admin_dashboard#update_undigested_input'
   patch '/dashboard/undigested_input/:id', to: 'admin_dashboard#update_undigested_input'
+
 end

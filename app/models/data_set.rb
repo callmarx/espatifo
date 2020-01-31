@@ -42,6 +42,8 @@ class DataSet < ApplicationRecord
       class_name = "dynamic_content#{self.id}"
       ActiveRecord::Migration.create_table(class_name) do |t|
         t.jsonb :row
+        t.integer :status
+        t.text :notes
       end
       set_dynamic_content(class_name)
     end
@@ -59,6 +61,7 @@ class DataSet < ApplicationRecord
       Object.const_set(class_name.classify, Class.new(ApplicationRecord) {
         self.table_name = class_name
         validates :row, presence: true
+        enum status: [:nothing, :approved, :unapproved, :analyzing, :others] 
 
         ## Não tem como testar as chaves do data_set que gerou esse dynamic_content sem
         ## recarrega-lo do banco. Fazer isso seria carregar o data_set "mãe" TODA vez que fosse

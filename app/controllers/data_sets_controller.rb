@@ -3,7 +3,7 @@ class DataSetsController < ApplicationController
   include DataResolveConcern
   before_action :authenticate_user!
   before_action :set_data_set, only: [:show]
-  before_action :set_dynamic_content, only: [:list, :show_subject, :stats, :show]
+  before_action :set_dynamic_content, only: [:list, :show_subject, :update_subject, :stats, :show]
   before_action :set_paginate_params, only: [:list]
   before_action :list_params, only: [:list]
   before_action :stats_params, only: [:stats]
@@ -31,29 +31,108 @@ class DataSetsController < ApplicationController
     if subject
       @list_collection = [subject]
       relation_decode
-      render json: @list_decoded
+      render json: @list_decoded.first
     else
       render status: :not_found
     end
+  end
+
+
+  # PUT /data_sets/1/1
+  def update_subject
+    subject = @dynamic_content.find_by_id(params[:subject_id])
+    unless subject
+      render status: :not_found
+      return
+    end
+    if params[:status]
+      if (!(params[:status].is_a? String) or
+      !([
+          "nothing",
+          "approved",
+          "unapproved",
+          "analyzing",
+          "other"].include? params[:status])
+      )
+        render json: {
+          error: "status must be in ['nothing','approved','unapproved','analyzing','other']"
+        }, status: :bad_request
+        return
+      end
+      subject.status = params[:status]
+    end
+    if params[:notes]
+      unless params[:notes].is_a? String
+        render json: {error: "Notes must be a String"}
+        return
+      end
+      subject.notes = params[:notes]
+    end
+    subject.save
+    @list_collection = [subject]
+    relation_decode
+    render json: @list_decoded.first
   end
 
   # POST /data_sets/1/list
   def list
     ## BODY parametros:
     # preset
+    if params[:status] and (
+    !(params[:status].is_a? Array) or
+    !((params[:status] - [
+        "nothing",
+        "approved",
+        "unapproved",
+        "analyzing",
+        "other"]).empty?
+    ))
+      render json: {
+        error: "status must be a Array in ['nothing','approved','unapproved','analyzing','other']"
+      }, status: :bad_request
+      return
+    end
     if params[:preset]
       build_preset_params
       if !@preset_readed.first
         render json: @preset_readed.last, status: :bad_request
         return
+      end
+      if params[:status]
+        @pagy, @list_collection = pagy(
+          @dynamic_content.select(
+              :id, :row, :status
+            ).where(
+              Arel.sql(@preset_readed.last)
+            ).where(
+              status: params[:status]
+            ).order(order_query),
+          items: @per_page
+        )
       else
         @pagy, @list_collection = pagy(
-          @dynamic_content.where(Arel.sql(@preset_readed.last)).order(order_query),
+          @dynamic_content.select(
+            :id, :row, :status
+            ).where(
+              Arel.sql(@preset_readed.last)
+            ).order(order_query),
           items: @per_page
         )
       end
+    elsif params[:status]
+      @pagy, @list_collection = pagy(
+        @dynamic_content.select(
+          :id, :row, :status
+        ).where(
+          status: params[:status]
+        ).order(order_query),
+        items: @per_page)
     else
-      @pagy, @list_collection = pagy(@dynamic_content.order(order_query), items: @per_page)
+      @pagy, @list_collection = pagy(
+        @dynamic_content.select(
+          :id, :row, :status
+        ).order(order_query),
+        items: @per_page)
     end
     relation_decode
     render json: {
@@ -84,10 +163,12 @@ class DataSetsController < ApplicationController
         render json: @preset_readed.last, status: :bad_request
         return
       else
-        @list_collection = @dynamic_content.where(Arel.sql(@preset_readed.last))
+        @list_collection = @dynamic_content.select(
+          :id, :row, :status
+        ).where(Arel.sql(@preset_readed.last))
       end
     else
-      @list_collection = @dynamic_content.all
+      @list_collection = @dynamic_content.select(:id, :row, :status).all
     end
     if params[:data_chart]
       result[:data_chart] = get_chart(params[:data_chart])
@@ -110,6 +191,9 @@ class DataSetsController < ApplicationController
     if params[:total_keys] == true
       result[:total_keys] = @data_set.keys_info.values
     end
+    #if params[:status]
+    ### fazer uma função q devolve a quantidade de cada :status do DynamicContent
+    #end
     render json: result
   end
 
