@@ -72,6 +72,13 @@ RSpec.describe "AdminDashboardController", :type => :request do
         except: [:data_set_id, :keys_info]
      ))
     end
+    it "not exists show" do
+      get "/dashboard/undigested_input/#{UndigestedInput.last.id + 1}", headers: @auth_headers_admin
+      expect(response).to have_http_status(:not_found)
+      expect(JSON.parse response.body).to include(
+        {"undigested_input_error" => "You don't have this undigested_input"}
+      )
+    end
     #it "index admin" do
       #get '/dashboard/undigested_input', headers: @auth_headers_admin
       #expect(response).to have_http_status(:success)

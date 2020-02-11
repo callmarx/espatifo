@@ -33,7 +33,7 @@ module DataResolveConcern
 
     def get_chart(keys_params)
       keys = keys_params.map{|k| @data_set.encode_key(k)}
-      total_listed = @list_collection.count
+      total_listed = @list_collection.count(:all)
       data_chart = {}
       return data_chart if total_listed == 0
       keys.each do |key|

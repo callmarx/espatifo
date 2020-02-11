@@ -186,7 +186,7 @@ class DataSetsController < ApplicationController
       result[:unique_values] = get_unique_values(params[:unique_values])
     end
     if params[:total_listed] == true
-      result[:total_listed] = @list_collection.count
+      result[:total_listed] = @list_collection.count(:all)
     end
     if params[:total_keys] == true
       result[:total_keys] = @data_set.keys_info.values
