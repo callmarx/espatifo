@@ -28,11 +28,14 @@ RSpec.describe "Devise Controllers", :type => :request do
       put '/signup', headers: @auth_headers, params: {
         user: {
           first_name: 'updated name',
-          current_password: '123456'
+          current_password: '123456',
+          password: '123456',
+          password_confirmation: '123456'
         }
       }
       expect(response).to have_http_status(:success)
       expect(JSON.parse response.body).to include("first_name" => 'updated name')
+      expect(User.find_by_id(@user.id).first_name).to eq("updated name")
     end
     it "destroy a user" do
       #puts "destroy @user.email = #{@user.email}"

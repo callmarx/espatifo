@@ -25,17 +25,9 @@ class User::RegistrationsController < Devise::RegistrationsController
   # end
 
   # PUT /resource
-   def update
-    if !(current_user.valid_password? account_update_params[:current_password])
-      render json: {error: "invalid authentication"} ,status: :unauthorized
-    else
-      without_current_password = account_update_params.to_hash
-      without_current_password.delete 'current_password'
-      current_user.update(without_current_password)
-      #current_user.save
-      super
-    end
-   end
+   #def update
+      #super
+   #end
 
   # DELETE /resource
   # def destroy
