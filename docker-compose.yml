@@ -1,37 +1,73 @@
-version: '3'
+version: '3.5'
+
+x-networks-service-template: &networks
+  networks:
+    - espatifo
+
+x-app-service-template: &app
+  build: .
+  <<: *networks
+  volumes:
+    - ./src:/app
+    - bundle:/bundle
+
+x-env-service-template: &environment
+  WEB_CONCURRENCY: 2
+  RAILS_ENV: development
+  RAILS_MASTER_KEY: de9ba22c99fb989a73ee2f7cef58739f
+  RAILS_MAX_THREADS: 2
+  REDIS_SIDEKIQ_URL: redis://espatifo-redis:6379/0
+  REDIS_CACHE_URL: redis://espatifo-redis:6379/1
+  REDIS_ACTION_URL: redis://espatifo-redis:6379/2
+  DB_NAME: espatifo
+  DB_HOST: db
+  DB_PORT: 5432
+  DB_USER: postgres
+  DB_PASS: root
+
 services:
+  api:
+    <<: *app
+    container_name: espatifo-api
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    environment:
+      <<: *environment
+
   db:
     image: postgres:alpine
+    container_name: espatifo-db
+    <<: *networks
     volumes:
-      - ./tmp/db:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: root
+    ports:
+      - 5432:5432
+
   redis:
     image: redis:alpine
-    command: "redis-server"
+    container_name: espatifo-redis
+    command: redis-server
+    <<: *networks
+    ports:
+      - 6379:6379
+
   sidekiq:
-    build:
-      context: .
-      dockerfile: docker/production.Dockerfile
-    command: bash -c "bundle exec sidekiq -C config/sidekiq.yml.erb"
+    <<: *app
+    container_name: espatifo-sidekiq
+    command: bundle exec sidekiq
     depends_on:
-      - db
       - redis
-  production:
-    build:
-      context: .
-      dockerfile: docker/production.Dockerfile
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    volumes:
-      - .:/espatifo_production
-    ports:
-      - "3000:3000"
-    depends_on:
-      - db
-      - redis
-  nginx:
-    build:
-      context: .
-      dockerfile: docker/nginx.Dockerfile
-    depends_on:
-      - production
-    ports:
-      - 80:80
+    environment:
+      <<: *environment
+
+networks:
+  espatifo:
+    driver: 'bridge'
+
+volumes:
+  db:
+  bundle:
