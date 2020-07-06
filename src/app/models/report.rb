@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Report < ApplicationRecord
   belongs_to :user
   belongs_to :data_set
@@ -7,10 +9,9 @@ class Report < ApplicationRecord
   validate :check_config_body_format
 
   private
+
   def check_config_body_format
-    if !self.config_body
-      self.errors.add :config_body, "can't be nil"
-    end
+    self.errors.add :config_body, "can't be nil" unless self.config_body
     # implementar checagem do formato depois de implentar a função de preset
   end
 end

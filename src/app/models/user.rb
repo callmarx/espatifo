@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -11,7 +13,8 @@ class User < ApplicationRecord
   validates :email, uniqueness: { case_sensitive: false }, presence: true
 
   private
-    def default_permission
-      self.permission ||= 'standard'
-    end
+
+  def default_permission
+    self.permission ||= 'standard'
+  end
 end

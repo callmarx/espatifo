@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DataSetsController < ApplicationController
   include Pagy::Backend
   include DataResolveConcern

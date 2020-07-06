@@ -13,6 +13,9 @@ AllCops:
 Style/Copyright:
   Enabled: false
 
+Style/AsciiComments:
+  Enabled: false
+
 Style/MethodCallWithArgsParentheses:
   Enabled: false
 
